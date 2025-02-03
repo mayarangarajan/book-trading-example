@@ -11,7 +11,7 @@
         <div class="trades-history">
             <h2>Trade History</h2>
             <div v-for="trade in tradeHistory" :key="trade.id" class="trade-item">
-                <p>{{ trade.book }} - {{ trade.date }}</p>
+                <p>{{ trade.book.title }} - {{ trade.createdAt }}</p>
                 <span :class="trade.status">{{ trade.status }}</span>
             </div>
         </div>
@@ -19,6 +19,8 @@
 </template>
 
 <script lang="ts">
+import type { Trade } from '../../shared/book';
+
 export default {
     data() {
         return {
@@ -26,16 +28,11 @@ export default {
                 name: 'John Doe',
                 email: 'john@example.com'
             },
-            tradeHistory: [
-                {
-                    id: 1,
-                    book: 'The Great Gatsby',
-                    cover: 'https://i0.wp.com/americanwritersmuseum.org/wp-content/uploads/2018/02/CK-3.jpg?resize=267%2C400&ssl=1',
-                    date: '2025-01-10',
-                    status: 'completed'
-                }
-            ]
+
         }
+    },
+    props: {
+        tradeHistory: Array<Trade>
     }
 }
 </script>

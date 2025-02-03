@@ -12,23 +12,40 @@
             <div v-for="book in searchResults" :key="book.id" class="book-item">
                 <h3>{{ book.title }}</h3>
                 <p>{{ book.author }}</p>
+                <button @click="() => { showModal = true; chooseBookId = book.id }">Offer Trade</button>
+
+            </div>
+            <div v-if="showModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" @click="closeModal">&times;</span>
+                    <h2>Offer Trade</h2>
+                    <input v-model="sendTo" placeholder="Enter username...">
+                    <button @click="createTrade">Confirm</button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import type { Book } from '../../shared/book'
+import type { Book, OutgoingTrade } from '../../shared/book'
 
 export default {
     data() {
         return {
+            chooseBook: {} as Book,
             searchQuery: '',
             searchType: 'title' as 'title' | 'author',
-            searchResults: [] as Book[]
+            searchResults: [] as Book[],
+            sendTo: '',
+            showModal: false
         }
     },
+    emits: ['createTrade'],
     methods: {
+        closeModal(): void {
+            this.showModal = false
+        },
         performSearch(): void {
             try {
                 // this is just to test that the search works
@@ -55,7 +72,29 @@ export default {
                 console.error('Error performing search:', error)
                 this.searchResults = []
             }
+        },
+        createTrade(): void {
+
+            // emit trade to parent component 
+            const trade: OutgoingTrade = {
+                book: this.chooseBook,
+                offeredTo: this.sendTo,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                id: 0,
+                offeredBy: '' // TODO: get the current user
+            }
+            this.$emit('createTrade', trade);
         }
     }
 }
 </script>
+
+<style scoped>
+.modal-content {
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+</style>

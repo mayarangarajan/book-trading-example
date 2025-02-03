@@ -12,3 +12,7 @@ export interface Book {
     status: 'pending' | 'accepted' | 'declined';
     createdAt: string;
   }
+
+  export interface OutgoingTrade extends Trade {
+    offeredTo: string;
+}
