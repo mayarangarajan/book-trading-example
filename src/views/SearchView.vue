@@ -12,7 +12,7 @@
             <div v-for="book in searchResults" :key="book.id" class="book-item">
                 <h3>{{ book.title }}</h3>
                 <p>{{ book.author }}</p>
-                <button @click="() => { showModal = true; chooseBookId = book.id }">Offer Trade</button>
+                <button @click="() => { showModal = true; chooseBook = book }">Offer Trade</button>
 
             </div>
             <div v-if="showModal" class="modal">
@@ -63,6 +63,7 @@ export default {
                         cover: 'https://m.media-amazon.com/images/I/61NAx5pd6XL.jpg'
                     }
                 ] as Book[]
+                // TODO: make a request to the server to search for books
                 // const response = await fetch(
                 //     `/api/books/search?q=${this.searchQuery}&type=${this.searchType}`
                 // )
