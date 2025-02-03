@@ -15,7 +15,7 @@
 .navbar a {
   margin: 0 1rem;
   text-decoration: none;
-  color: #333;
+  color: #ddd;
 }
 
 .navbar a.router-link-active {
