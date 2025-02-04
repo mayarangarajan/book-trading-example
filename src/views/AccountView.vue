@@ -1,38 +1,41 @@
 <template>
-    <div class="account">
-        <h1>My Account</h1>
-        <div class="profile-section">
-            <h2>Profile Information</h2>
-            <div class="user-info">
-                <p><strong>Name:</strong> {{ userInfo.name }}</p>
-                <p><strong>Email:</strong> {{ userInfo.email }}</p>
-            </div>
-        </div>
-        <div class="trades-history">
-            <h2>Trade History</h2>
+    <div class="account-container">
+        <h1>Your Trade History</h1>
+        <div v-if="tradeHistory.length > 0">
             <div v-for="trade in tradeHistory" :key="trade.id" class="trade-item">
-                <p>{{ trade.book.title }} - {{ trade.createdAt }}</p>
-                <span :class="trade.status">{{ trade.status }}</span>
+                <BookView :book="trade.book" />
+                <p>Traded with: {{ trade.offeredBy }}</p>
+                <p>Date: {{ new Date(trade.createdAt).toLocaleDateString() }}</p>
             </div>
         </div>
+        <p v-else>No trades completed yet.</p>
     </div>
 </template>
 
 <script lang="ts">
+import BookView from '@/components/BookView.vue';
 import type { Trade } from '../../shared/book';
 
 export default {
-    data() {
-        return {
-            userInfo: {
-                name: 'John Doe',
-                email: 'john@example.com'
-            },
-
-        }
+    components: {
+        BookView
     },
     props: {
-        tradeHistory: Array<Trade>
+        tradeHistory: Array as () => Trade[],
     }
 }
 </script>
+
+<style scoped>
+.account-container {
+    padding: 1rem;
+}
+
+.trade-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+</style>

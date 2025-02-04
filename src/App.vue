@@ -1,6 +1,7 @@
 <script lang="ts">
 import NavBar from './components/NavBar.vue'
 import type { Trade, OutgoingTrade } from '../shared/book'
+
 export default {
   components: { NavBar },
   data() {
@@ -40,7 +41,7 @@ export default {
         status: 'pending',
         createdAt: '2025-01-30'
       }
-    ]
+    ];
     this.tradeHistory = [
       {
         id: 1,
@@ -54,22 +55,31 @@ export default {
         status: 'accepted',
         offeredBy: 'Someone'
       }
-    ]
+    ];
   },
   methods: {
     createTrade(trade: OutgoingTrade) {
-      this.outgoingTrades.push(trade)
+      this.outgoingTrades.push(trade);
+    },
+    handleTradeAccepted(trade: Trade) {
+      // Add accepted trade to trade history
+      this.tradeHistory.push(trade);
+
+      // Remove from incoming trades
+      this.incomingTrades = this.incomingTrades.filter(t => t.id !== trade.id);
     }
   }
 }
 </script>
 
-
 <template>
-
   <NavBar></NavBar>
 
-
-  <RouterView @create-trade="createTrade" :tradeHistory="tradeHistory" :outgoingTrades="outgoingTrades"
-    :incomingTrades="incomingTrades" />
+  <RouterView 
+    @create-trade="createTrade" 
+    @tradeAccepted="handleTradeAccepted" 
+    :tradeHistory="tradeHistory" 
+    :outgoingTrades="outgoingTrades"
+    :incomingTrades="incomingTrades" 
+  />
 </template>

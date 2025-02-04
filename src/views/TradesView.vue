@@ -1,19 +1,16 @@
 <template>
-    <div class="trades=container">
+    <div class="trades-container">
         <div class="trades-section">
-
             <h1>Incoming Trades</h1>
-            <div class="trades-list">
-                <div v-for="trade in incomingTrades" :key="trade.id" class="trade-card">
-                    <div class="trade-details">
-                        <h3>{{ trade.book.title }}</h3>
-                        <p>Offered by: {{ trade.offeredBy }}</p>
-                        <p>Status: {{ trade.status }}</p>
-                    </div>
-                    <div class="trade-actions">
-                        <button class="accept-btn" @click="acceptTrade(trade.id)">Accept</button>
-                        <button class="decline-btn" @click="declineTrade(trade.id)">Decline</button>
-                    </div>
+            <div v-for="trade in incomingTrades" :key="trade.id" class="trade-card">
+                <BookView :book="trade.book" />
+                <div class="trade-details">
+                    <p>Offered by: {{ trade.offeredBy }}</p>
+                    <p>Status: {{ trade.status }}</p>
+                </div>
+                <div class="trade-actions">
+                    <button class="accept-btn" @click="acceptTrade(trade)">Accept</button>
+                    <button class="decline-btn" @click="declineTrade(trade.id)">Decline</button>
                 </div>
             </div>
         </div>
@@ -21,9 +18,8 @@
             <h1>Your Pending Trade Requests</h1>
             <div class="trades-list">
                 <div v-for="trade in outgoingTrades" :key="trade.id" class="trade-card">
-
+                    <BookView :book="trade.book" />
                     <div class="trade-details">
-                        <h3>{{ trade.book.title }}</h3>
                         <p>Sending to: {{ trade.offeredTo }}</p>
                         <p>Status: {{ trade.status }}</p>
                     </div>
@@ -37,26 +33,30 @@
 </template>
 
 <script lang="ts">
+import BookView from '@/components/BookView.vue';
+import type { Trade, OutgoingTrade } from '../../shared/book';
 
-import type { Trade, OutgoingTrade } from '../../shared/book'
 export default {
-    data() {
-        return {
-        }
+    components: {
+        BookView
     },
     props: {
-        incomingTrades: Array<Trade>,
-        outgoingTrades: Array<OutgoingTrade>,
+        incomingTrades: Array as () => Trade[],
+        outgoingTrades: Array as () => OutgoingTrade[],
     },
+    emits: ['tradeAccepted'],
     methods: {
-        acceptTrade(tradeId: number): void {
-            // Implement accept logic
+        acceptTrade(trade: Trade): void {
+            this.$emit('tradeAccepted', trade);
+
+            // Remove the accepted trade from incomingTrades
+            this.incomingTrades = this.incomingTrades.filter(t => t.id !== trade.id);
         },
         declineTrade(tradeId: number): void {
-            // Implement decline logic
+            this.incomingTrades = this.incomingTrades.filter(t => t.id !== tradeId);
         },
         cancelTrade(tradeId: number): void {
-
+            this.outgoingTrades = this.outgoingTrades.filter(t => t.id !== tradeId);
         }
     }
 }
@@ -88,13 +88,6 @@ export default {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.book-cover {
-    width: 100px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
 .trade-actions {
     display: flex;
     flex-direction: column;
@@ -116,11 +109,9 @@ button {
 .decline-btn {
     background: #f44336;
     color: white;
-
 }
 
 .cancel-btn {
-
     background: #aaaaaa;
     color: white;
 }

@@ -13,7 +13,6 @@
                 <h3>{{ book.title }}</h3>
                 <p>{{ book.author }}</p>
                 <button @click="() => { showModal = true; chooseBook = book }">Offer Trade</button>
-
             </div>
             <div v-if="showModal" class="modal">
                 <div class="modal-content">
@@ -48,7 +47,6 @@ export default {
         },
         performSearch(): void {
             try {
-                // this is just to test that the search works
                 const data: Book[] = [
                     {
                         id: 1,
@@ -63,11 +61,6 @@ export default {
                         cover: 'https://m.media-amazon.com/images/I/61NAx5pd6XL.jpg'
                     }
                 ] as Book[]
-                // TODO: make a request to the server to search for books
-                // const response = await fetch(
-                //     `/api/books/search?q=${this.searchQuery}&type=${this.searchType}`
-                // )
-                // const data = await response.json()
                 this.searchResults = data as Book[]
             } catch (error) {
                 console.error('Error performing search:', error)
@@ -75,15 +68,13 @@ export default {
             }
         },
         createTrade(): void {
-
-            // emit trade to parent component 
             const trade: OutgoingTrade = {
                 book: this.chooseBook,
                 offeredTo: this.sendTo,
                 status: 'pending',
                 createdAt: new Date().toISOString(),
                 id: 0,
-                offeredBy: '' // TODO: get the current user
+                offeredBy: '' 
             }
             this.$emit('createTrade', trade);
         }
